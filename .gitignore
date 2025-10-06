@@ -1,0 +1,16 @@
+
+venv/
+venv-gemini/
+.venv/
+
+
+pycache/
+*.pyc
+*.pyo
+*.pyd
+
+.env
+
+
+.vscode/
+.idea/
