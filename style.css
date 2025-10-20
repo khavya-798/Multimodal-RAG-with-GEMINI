@@ -1,0 +1,154 @@
+/* --- 1. Background Image --- */
+.stApp {
+    /* Subtle geometric background */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-attachment: fixed;
+}
+
+/* Dark overlay (optional, adjust opacity 0.0 to 1.0) */
+.stApp::before {
+    content: "";
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.15); /* Reduced overlay darkness */
+    z-index: -1;
+}
+
+/* --- REMOVED Aggressive Header Hiding --- */
+/* Let Streamlit manage its header, our background will show */
+
+/* --- 2. Main Content Card (Theme Aware) --- */
+.block-container {
+    max-width: 900px; margin: 2rem auto; padding: 2rem 2.5rem;
+    background-color: var(--secondary-background-color); /* Theme-aware background */
+    border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* --- 3. Sidebar (Fixed Dark Background) --- */
+[data-testid="stSidebar"] {
+    background-color: #262730; padding: 1.5rem; border-right: 1px solid #444;
+}
+
+/* --- 4. Sidebar Text (Fixed Light Color) --- */
+[data-testid="stSidebar"] *,
+[data-testid="stSidebar"] label {
+    color: #FAFAFA !important;
+}
+[data-testid="stSidebar"] .stAlert p { /* Target info box text */
+     color: #EAEAEA !important;
+}
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {
+     color: #FFFFFF !important;
+}
+
+/* --- 5. Main Content Text (Theme Aware) --- */
+.block-container h1, .block-container h3, .block-container .st-write,
+.block-container .stAlert p,
+.block-container .st-success, .block-container .st-error {
+    color: var(--text-color);
+}
+
+
+/* --- 6. Styled Components --- */
+
+/* File Uploader in Sidebar - VISIBILITY FIX */
+[data-testid="stSidebar"] [data-testid="stFileUploader"] {
+    border: 2px dashed #007bff; border-radius: 8px; padding: 15px; background-color: #333;
+    text-align: center;
+}
+/* Ensure default cloud icon is visible */
+[data-testid="stSidebar"] [data-testid="stFileUploader"] svg {
+    fill: #AAAAAA !important; /* Force SVG icon color */
+    opacity: 0.7 !important;
+    margin-bottom: 8px;
+}
+[data-testid="stSidebar"] [data-testid="stFileUploader"] label {
+    font-weight: 500; color: #58C3FF !important; /* Brighter blue label */
+    margin-bottom: 5px;
+}
+/* Ensure internal text is light */
+[data-testid="stSidebar"] [data-testid="stFileUploader"] div[data-testid="stText"] p {
+     color: #DDDDDD !important; /* Lighter gray for 'Drag and drop' */
+     font-size: 0.9em; line-height: 1.3;
+}
+[data-testid="stSidebar"] [data-testid="stFileUploader"] span {
+     color: #AAAAAA !important; /* Lighter gray for limit text */
+     font-size: 0.85em; display: block; margin-top: 5px;
+}
+/* Make "Browse files" button text visible */
+[data-testid="stSidebar"] [data-testid="stFileUploader"] section button {
+    color: #DDDDDD !important; /* Light text */
+    border: 1px solid #555; background-color: #444;
+    margin-top: 10px; display: inline-block; padding: 5px 15px;
+}
+[data-testid="stSidebar"] [data-testid="stFileUploader"] section button:hover {
+    color: #FFFFFF !important; border: 1px solid #777; background-color: #555;
+}
+
+
+/* Chat Bubbles (Theme Aware) */
+[data-testid="chat-message-container"] {
+    border-radius: 12px; padding: 1rem; margin-bottom: 0.5rem; max-width: 90%;
+}
+[data-testid="chat-message-container"]:has([data-testid="chat-avatar-icon-user"]) {
+    background-color: var(--primary-color); color: white;
+}
+[data-testid="chat-message-container"]:has([data-testid="chat-avatar-icon-assistant"]) {
+    background-color: var(--background-color); border: 1px solid var(--border-color); color: var(--text-color);
+}
+
+/* --- 7. Footer Links Styling (in Fixed Dark Sidebar) --- */
+.footer-links {
+    text-align: center; margin-top: 2rem; opacity: 0.9; font-size: 0.9em;
+}
+.footer-links b {
+    display: block; margin-bottom: 0.5rem; color: #FFFFFF !important;
+}
+.footer-links a {
+    color: #58C3FF !important; text-decoration: none; font-weight: 600; margin: 0 0.5rem; display: inline-flex; align-items: center; gap: 4px;
+}
+.footer-links a:hover {
+    text-decoration: underline; color: #87D7FF !important;
+}
+.footer-links img.icon {
+    height: 16px; vertical-align: middle; filter: brightness(0) invert(1); opacity: 0.9;
+}
+
+/* --- 8. Icon Styling (General) --- */
+.icon {
+    height: 1em; vertical-align: -0.15em; margin-right: 0.3em;
+}
+
+/* --- 9. Sidebar Collapse Button Visibility FIX (Less Aggressive) --- */
+/* Target the button Streamlit uses for the sidebar toggle */
+button[kind="minimal"][data-testid="baseButton-headerNoPadding"] {
+    display: block !important;          /* Ensure it's displayed */
+    position: fixed !important;         /* Position relative to viewport */
+    top: 5px !important;                /* Position near top-left */
+    left: 5px !important;
+    z-index: 9999 !important;         /* High z-index */
+    color: #FFFFFF !important;          /* White icon color */
+    background-color: rgba(0, 0, 0, 0.4) !important; /* Dark background */
+    border-radius: 5px !important;
+    padding: 6px !important;            /* Padding */
+    opacity: 0.7 !important;            /* Slightly transparent */
+    visibility: visible !important;     /* Make sure it's visible */
+    border: none !important;
+    cursor: pointer !important;
+}
+
+/* Ensure visibility on hover */
+button[kind="minimal"][data-testid="baseButton-headerNoPadding"]:hover {
+    opacity: 1.0 !important;
+    background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Force the SVG icon inside the button to be visible and white */
+button[kind="minimal"][data-testid="baseButton-headerNoPadding"] svg {
+    display: block !important;
+    fill: #FFFFFF !important;
+    stroke: #FFFFFF !important;
+    visibility: visible !important;
+    opacity: 1.0 !important;
+}
