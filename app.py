@@ -2,34 +2,11 @@ import os
 import streamlit as st
 from dotenv import load_dotenv
 import rag_utils  # Import our utility functions
-import base64 # Import base64 for image encoding
+# Removed base64 import as it's no longer needed
 
-# --- BACKGROUND IMAGE INJECTION ---
-def get_base64_of_bin_file(bin_file):
-    """Encodes a binary file (like an image) to base64."""
-    try:
-        with open(bin_file, 'rb') as f:
-            data = f.read()
-        return base64.b64encode(data).decode()
-    except FileNotFoundError:
-        st.error(f"Background image '{bin_file}' not found. Please ensure it's in the project folder and named correctly.")
-        return None
-
-def set_background_image(image_file):
-    """Sets the background image for the app by injecting base64 into CSS."""
-    encoded_image = get_base64_of_bin_file(image_file)
-    if encoded_image:
-        # Set the CSS variable --bg-image-url that style.css uses
-        st.markdown(
-            f"""
-            <style>
-            :root {{
-                --bg-image-url: url("data:image/jpg;base64,{encoded_image}");
-            }}
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
+# --- REMOVED Background Image Functions ---
+# get_base64_of_bin_file() removed
+# set_background_image() removed
 
 # --- CUSTOM STYLING (Loads style.css) ---
 def load_css(file_name):
@@ -48,7 +25,7 @@ st.set_page_config(
 )
 
 # --- LOAD ASSETS ---
-set_background_image("background.jpg") # Make sure you have the correct background.jpg
+# Only load the CSS file now
 load_css("style.css")
 
 # --- ENVIRONMENT AND API KEY ---
@@ -99,7 +76,8 @@ with st.sidebar:
             <a href="https://github.com/khavya-798" target="_blank">
                 <img src="https://icons.getbootstrap.com/assets/icons/github.svg" class="icon"> GitHub
             </a>
-            <a href="https://www.linkedin.com/in/khavyanjali-gopisetty-019720254/" target="_blank"> <img src="https://icons.getbootstrap.com/assets/icons/linkedin.svg" class="icon"> LinkedIn
+            <a href="https://www.linkedin.com/in/khavyanjali-gopisetty-019720254/" target="_blank">
+                <img src="https://icons.getbootstrap.com/assets/icons/linkedin.svg" class="icon"> LinkedIn
             </a>
         </div>
         """,
@@ -119,18 +97,14 @@ if uploaded_pdf and uploaded_image:
     image_name = uploaded_image.name
     if st.session_state.get("pdf_name") != pdf_name or st.session_state.get("image_name") != image_name or "vector_store" not in st.session_state:
         with st.spinner("Processing your documents... This may take a moment."):
-            # --- Ensure process_files takes the correct number of arguments ---
-            # If rag_utils.py expects only PDF:
-            # st.session_state.vector_store = rag_utils.process_files(uploaded_pdf)
-            # If rag_utils.py expects PDF and Image:
+            # Assumes rag_utils.process_files expects PDF and Image
             st.session_state.vector_store = rag_utils.process_files(uploaded_pdf, uploaded_image)
 
             st.session_state.pdf_name = pdf_name
             st.session_state.image_name = image_name
-            # Clear messages when new files are processed
             if "messages" in st.session_state:
                  st.session_state.messages = []
-        if st.session_state.vector_store: # Check if processing was successful
+        if st.session_state.vector_store:
             st.success("Documents processed successfully! You can now ask questions.")
         else:
             st.error("Failed to process documents. Please check the files or logs.")
@@ -138,46 +112,29 @@ if uploaded_pdf and uploaded_image:
             if "pdf_name" in st.session_state: del st.session_state.pdf_name
             if "image_name" in st.session_state: del st.session_state.image_name
             if "vector_store" in st.session_state: del st.session_state.vector_store
-
     else:
-        # Only show this if there are no messages yet (first load after processing)
         if "messages" not in st.session_state or not st.session_state.messages:
              st.success("Documents already loaded. Ask your questions below.")
 else:
-    # Only show info message if files aren't uploaded
     st.info("Please upload both a PDF and an image file to begin.")
-    # Clear session state if files are removed
     if "vector_store" in st.session_state:
         st.session_state.clear()
 
 
 # --- CHAT INTERFACE ---
-# Only display chat if vector store is ready
 if "vector_store" in st.session_state and st.session_state.vector_store:
-
-    # Initialize chat history if it doesn't exist
     if "messages" not in st.session_state:
         st.session_state.messages = []
-
-    # Display chat messages from history
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
-
-    # Accept user input
     if user_question := st.chat_input("Ask a question about the content of your documents:"):
-        # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": user_question})
-
-        # Display user message immediately
         with st.chat_message("user"):
             st.markdown(user_question)
-
-        # Generate and display assistant response
         with st.chat_message("assistant"):
             with st.spinner("Generating answer..."):
                 answer = rag_utils.generate_answer(user_question, st.session_state.vector_store)
                 st.markdown(answer)
-
-        # Add assistant response to chat history
+        # --- FIX: Removed trailing comma ---
         st.session_state.messages.append({"role": "assistant", "content": answer})
